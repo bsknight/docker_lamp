@@ -42,7 +42,7 @@ services:
     container_name: mysql
     image: mysql
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1234rewq
+      MYSQL_ALLOW_EMPTY_PASSWORD: sb
     volumes:
       - "./mysql_file/:/var/lib/mysql"
       - "./mysql_conf/:/etc/mysql/"
