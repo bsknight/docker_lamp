@@ -1,0 +1,64 @@
+version: '2'
+services:
+
+  web:
+    container_name: nginx
+    image: nginx
+    #links:
+    #  - php:php
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "../src:/data/web/"
+      - "./nginx_conf/:/etc/nginx/"
+      - "./nginx_log/:/var/log/nginx/"
+      - "/etc/localtime:/etc/localtime"
+      - "phpsocket:/var/run"  
+    networks:
+      - backend-php
+
+  php:
+    container_name: php-fpm 
+    build: ./php_build
+    #image: php:fpm
+    links:
+      - db:db
+    # - mq:mq
+      - redis:redis
+    volumes:
+      - "../src:/data/web/"
+      - "./php_log/:/usr/local/var/log/"
+      - "./php_conf/:/usr/local/etc/"
+      - "/etc/localtime:/etc/localtime"
+      - "phpsocket:/var/run"  
+    networks:
+      - backend-php
+  #mq:
+  #  container_name: rabbitmq
+  #  image: rabbitmq
+  
+  db:
+    container_name: mysql
+    image: mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1234rewq
+    volumes:
+      - "./mysql_file/:/var/lib/mysql"
+      - "./mysql_conf/:/etc/mysql/"
+      - "/etc/localtime:/etc/localtime"
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6499:6379"
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+
+        
+networks:
+    backend-php:
+        driver: bridge
+volumes:
+    phpsocket:
