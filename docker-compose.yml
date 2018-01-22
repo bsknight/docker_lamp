@@ -14,9 +14,9 @@ services:
       - "./nginx_conf/:/etc/nginx/"
       - "./nginx_log/:/var/log/nginx/"
       - "/etc/localtime:/etc/localtime"
-      - "phpsocket:/var/run"  
+      - "sock_php:/var/run"  
     networks:
-      - backend-php
+      - backend_php
 
   php:
     container_name: php-fpm 
@@ -31,9 +31,9 @@ services:
       - "./php_log/:/usr/local/var/log/"
       - "./php_conf/:/usr/local/etc/"
       - "/etc/localtime:/etc/localtime"
-      - "phpsocket:/var/run"  
+      - "sock_php:/var/run"  
     networks:
-      - backend-php
+      - backend_php
   #mq:
   #  container_name: rabbitmq
   #  image: rabbitmq
@@ -58,7 +58,7 @@ services:
 
         
 networks:
-    backend-php:
+    backend_php:
         driver: bridge
 volumes:
-    phpsocket:
+    sock_php:
