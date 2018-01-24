@@ -4,13 +4,15 @@ services:
   web:
     container_name: nginx
     image: nginx
+    restart: always
     #links:
     #  - php:php
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - "../src:/data/web/"
+      #- "../src/yii-application/:/data/web/"
+      - "../src/basic/:/data/web/"
       - "./nginx_conf/:/etc/nginx/"
       - "./nginx_log/:/var/log/nginx/"
       - "/etc/localtime:/etc/localtime"
@@ -21,13 +23,16 @@ services:
   php:
     container_name: php-fpm 
     build: ./php_build
+    #container_name: php_yii2
+    #build: ./php_yii2_build
     #image: php:fpm
     links:
       - db:db
     # - mq:mq
       - redis:redis
     volumes:
-      - "../src:/data/web/"
+      #- "../src/yii-application/:/data/web/"
+      - "../src/basic/:/data/web/"
       - "./php_log/:/usr/local/var/log/"
       - "./php_conf/:/usr/local/etc/"
       - "/etc/localtime:/etc/localtime"
@@ -42,7 +47,10 @@ services:
     container_name: mysql
     image: mysql
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: sb
+        MYSQL_DATABASE: db_findata
+        MYSQL_ROOT_PASSWORD: 1234rewq
+    ports:
+      - "33060:3306"
     volumes:
       - "./mysql_file/:/var/lib/mysql"
       - "./mysql_conf/:/etc/mysql/"
