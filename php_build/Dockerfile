@@ -1,4 +1,4 @@
-FROM php:fpm
+FROM php:7.0-fpm
 
 #RUN apt-get update && apt-get install -my wget gnupg
 COPY ./sources.list /etc/apt/
@@ -11,6 +11,8 @@ RUN cat /etc/apt/sources.list
 RUN apt-get update -y \
     && apt-get install -y \
         git \
+        zip \
+        vim 
         #libpng-dev \
         #libjpeg62-turbo-dev \
         #libfreetype6-dev \
@@ -18,6 +20,7 @@ RUN apt-get update -y \
         #zlib1g-dev=1:1.2.8.dfsg-2+b1
 
 RUN docker-php-source extract \
+    && docker-php-ext-install mbstring \
     && docker-php-ext-install pdo_mysql \
     #&& docker-php-ext-configure gd \
     #    --with-gd \
