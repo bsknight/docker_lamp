@@ -1,4 +1,5 @@
 FROM php:7.0-fpm
+FROM php:7.0-fpm
 
 #RUN apt-get update && apt-get install -my wget gnupg
 COPY ./sources.list /etc/apt/
@@ -12,12 +13,14 @@ RUN apt-get update -y \
     && apt-get install -y \
         git \
         zip \
-        vim 
+        vim \
+        alien
         #libpng-dev \
         #libjpeg62-turbo-dev \
         #libfreetype6-dev \
         #libpng12-dev \
         #zlib1g-dev=1:1.2.8.dfsg-2+b1
+
 
 RUN docker-php-source extract \
     && docker-php-ext-install mbstring \
@@ -33,3 +36,15 @@ RUN docker-php-source extract \
     && rm /usr/src/php/ext/redis.tgz \
     && docker-php-ext-install redis-3.1.3 \
     && docker-php-source delete
+
+ADD ./oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm /tmp/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+ADD ./oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm /tmp/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+
+RUN alien -i /tmp/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
+RUN alien -i /tmp/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+#RUN pear config-set http_proxy http://myproxy.us.oracle.com:80/
+RUN pecl channel-update pecl.php.net
+RUN pear config-show
+#RUN pecl install oci8-1.3.4.tgz
+RUN pecl install oci8
+RUN docker-php-ext-enable oci8

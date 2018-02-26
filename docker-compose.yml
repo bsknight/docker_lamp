@@ -3,7 +3,8 @@ services:
 
   web:
     container_name: nginx
-    image: nginx
+    build: ./nginx_build
+    #image: nginx
     restart: always
     #links:
     #  - php:php
