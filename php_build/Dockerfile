@@ -1,5 +1,4 @@
 FROM php:7.0-fpm
-FROM php:7.0-fpm
 
 #RUN apt-get update && apt-get install -my wget gnupg
 COPY ./redis.tgz /usr/src/php/ext/

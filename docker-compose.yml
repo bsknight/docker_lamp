@@ -6,40 +6,47 @@ services:
     build: ./nginx_build
     #image: nginx
     restart: always
-    #links:
-    #  - php:php
+    links:
+      - php:php
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      #- "../src/yii-application/:/data/web/"
       - "../src/basic/:/data/web/"
+      - "/data/walle/:/data/walle/"
       - "./nginx_conf/:/etc/nginx/"
       - "./nginx_log/:/var/log/nginx/"
       - "/etc/localtime:/etc/localtime"
-      - "sock_php:/var/run"  
-    networks:
-      - backend_php
+      #- "sock_php:/var/run"  
+    #networks:
+    #  - backend_php
+    #network_mode: 
+       #"host"
+    depends_on:
+      - php
 
   php:
     container_name: php-fpm 
     build: ./php_build
-    #container_name: php_yii2
-    #build: ./php_yii2_build
     #image: php:fpm
-    links:
-      - db:db
-    # - mq:mq
-      - redis:redis
+    #links:
+    #  - db:db
+    #  - mq:mq
+    #  - redis:redis
     volumes:
-      #- "../src/yii-application/:/data/web/"
       - "../src/basic/:/data/web/"
+      - "/data/walle/:/data/walle/"
       - "./php_log/:/usr/local/var/log/"
       - "./php_conf/:/usr/local/etc/"
       - "/etc/localtime:/etc/localtime"
-      - "sock_php:/var/run"  
-    networks:
-      - backend_php
+      #- "sock_php:/var/run"  
+    #networks:
+      #- backend_php
+    #network_mode:
+      #"host"
+    depends_on:
+      - db
+      - redis
   #mq:
   #  container_name: rabbitmq
   #  image: rabbitmq
@@ -56,6 +63,8 @@ services:
       - "./mysql_file/:/var/lib/mysql"
       - "./mysql_conf/:/etc/mysql/"
       - "/etc/localtime:/etc/localtime"
+        #networks:
+        #- backend_php
 
   redis:
     container_name: redis
@@ -64,10 +73,11 @@ services:
       - "6499:6379"
     volumes:
       - "/etc/localtime:/etc/localtime"
-
+        #networks:
+        #- backend_php
         
-networks:
-    backend_php:
-        driver: bridge
-volumes:
-    sock_php:
+        #networks:
+        # backend_php:
+        #driver: bridge
+#volumes:
+#    sock_php:
