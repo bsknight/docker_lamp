@@ -6,8 +6,6 @@ services:
     build: ./nginx_build
     #image: nginx
     restart: always
-    #links:
-    #  - php:php
     ports:
       - "80:80"
       - "443:443"
@@ -17,7 +15,7 @@ services:
       - "./nginx_conf/:/etc/nginx/"
       - "./nginx_log/:/var/log/nginx/"
       - "/etc/localtime:/etc/localtime"
-      - "sock_php:/var/run"  
+      #- "sock_php:/var/run"  
     networks:
       - backend_php
 
@@ -37,7 +35,7 @@ services:
       - "./php_log/:/usr/local/var/log/"
       - "./php_conf/:/usr/local/etc/"
       - "/etc/localtime:/etc/localtime"
-      - "sock_php:/var/run"  
+      #- "sock_php:/var/run"  
     networks:
       - backend_php
   #mq:
@@ -48,7 +46,7 @@ services:
     container_name: mysql
     image: mysql
     environment:
-        MYSQL_DATABASE: db_findata
+        MYSQL_DATABASE: db_wxprogram
         MYSQL_ROOT_PASSWORD: 1234rewq
     ports:
       - "33060:3306"
@@ -69,5 +67,5 @@ services:
 networks:
     backend_php:
         driver: bridge
-volumes:
-    sock_php:
+#volumes:
+#    sock_php:
