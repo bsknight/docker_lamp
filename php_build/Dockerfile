@@ -43,7 +43,7 @@ RUN docker-php-source extract \
     && tar -xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext/ \
     && rm /usr/src/php/ext/redis.tgz \
     && docker-php-ext-install redis-3.1.3 \
-    && docker-php-ext-install opcache \
+    && docker-php-ext-configure opcache --enable-opcache && docker-php-ext-install opcache \
     && docker-php-source delete
 
 #ADD ./oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm /tmp/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
