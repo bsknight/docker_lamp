@@ -1,32 +1,23 @@
 FROM php:7.0-fpm
 
-#RUN apt-get update && apt-get install -my wget gnupg
 COPY ./redis.tgz /usr/src/php/ext/
 COPY ./sources.list /etc/apt/
 RUN cat /etc/apt/sources.list
-#RUN apt-key adv --recv-keys --keyserver mirrors.aliyun.com 40976EAF437D05B5
-#RUN apt-key adv --recv-keys --keyserver mirrors.aliyun.com 3B4FE6ACC0B21F32
 
-#RUN apt-key adv --keyserver mirrors.aliyun.com --recv-keys 40976EAF437D05B5
-#RUN apt-key adv --keyserver mirrors.aliyun.com --recv-keys 3B4FE6ACC0B21F32
 RUN apt-get update -y \
     && apt-get install -y \
         git \
         zip \
         vim \
         alien \
-        #libpng-dev \
-        #libjpeg62-turbo-dev \
-        #libfreetype6-dev \
-        #libpng12-dev \
-        #zlib1g-dev=1:1.2.8.dfsg-2+b1
         libfreetype6-dev \
         libmcrypt-dev \
         libpng12-dev \
         libjpeg-dev \
         libpng-dev \
         zlib1g-dev \
-        zlib1g=1:1.2.8.dfsg-2+b1 --allow-downgrades 
+        zlib1g=1:1.2.8.dfsg-2+b1 --allow-downgrades \
+        #pdftk
 
 RUN docker-php-source extract \
     && docker-php-ext-install mbstring \
@@ -38,17 +29,31 @@ RUN docker-php-source extract \
         --with-jpeg-dir=/usr/include \
     && docker-php-ext-install gd \
     && tar -xf /usr/src/php/ext/redis.tgz -C /usr/src/php/ext/ \
-    && docker-php-ext-install redis-3.1.3 
+    && docker-php-ext-install redis-3.1.3
     #&& docker-php-source delete
 
-#ADD ./oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm /tmp/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
-#ADD ./oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm /tmp/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
+#ADD ./oracle-instantclient-basic-10.2.0.5-1.x86_64.rpm /tmp/oracle-instantclient-basic-10.2.0.5-1.x86_64.rpm
+#ADD ./oracle-instantclient-devel-10.2.0.5-1.x86_64.rpm /tmp/oracle-instantclient-devel-10.2.0.5-1.x86_64.rpm
+#RUN alien -i /tmp/oracle-instantclient-basic-10.2.0.5-1.x86_64.rpm
+#RUN alien -i /tmp/oracle-instantclient-devel-10.2.0.5-1.x86_64.rpm
 
-#RUN alien -i /tmp/oracle-instantclient12.1-basic-12.1.0.2.0-1.x86_64.rpm
-#RUN alien -i /tmp/oracle-instantclient12.1-devel-12.1.0.2.0-1.x86_64.rpm
-#RUN pear config-set http_proxy http://myproxy.us.oracle.com:80/
-#RUN pecl channel-update pecl.php.net
-#RUN pear config-show
-#RUN pecl install oci8-1.3.4.tgz
-#RUN pecl install oci8
-#RUN docker-php-ext-enable oci8
+#RUN ln -s /usr/include/oracle/10.2.0.5/client64 /usr/include/oracle/10.2.0.5/client
+#RUN ln -s /usr/lib/oracle/10.2.0.5/client64 /usr/lib/oracle/10.2.0.5/client
+
+#ENV LD_LIBRARY_PATH /usr/lib/oracle/10.2.0.5/client64/lib
+#ENV ORACLE_HOME /usr/lib/oracle/10.2.0.5/client64
+#ENV PATH $PATH:$ORACLE_HOME/bin:$ORACLE_HOME/lib
+#ENV TNS_ADMIN $ORACLE_HOME/network/admin
+#COPY ./oci8-2.1.8.tgz /tmp/oci8-2.1.8.tgz
+
+#RUN cd /tmp && tar -xzf oci8-2.1.8.tgz \
+#    && cd oci8-2.1.8 && phpize \
+#    && ./configure --with-oci8=shared,instantclient,/usr/lib/oracle/10.2.0.5/client64/lib --with-php-config=/usr/local/bin/php-config \
+#    && make && make install
+#COPY ./pdo_oci /tmp/pdo_oci
+#RUN cd /tmp/pdo_oci && phpize \
+#    && ./configure --with-php-config=/usr/local/bin/php-config --with-pdo-oci=instantclient,/usr/,10.2.0.5 \
+#    && make && make install
+#RUN docker-php-ext-enable oci8 && docker-php-ext-enable pdo_oci
+
+#COPY ./oracle.sh /etc/profile.d/

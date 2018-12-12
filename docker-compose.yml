@@ -6,6 +6,8 @@ services:
     build: ./nginx_build
     #image: nginx
     restart: always
+    #links:
+    #  - php:php
     ports:
       - "80:80"
       - "443:443"
@@ -15,13 +17,8 @@ services:
       - "./nginx_conf/:/etc/nginx/"
       - "./nginx_log/:/var/log/nginx/"
       - "/etc/localtime:/etc/localtime"
-      #- "sock_php:/var/run"  
     networks:
       - backend_php
-    #network_mode: 
-       #"host"
-    depends_on:
-      - php
 
   php:
     container_name: php-fpm 
@@ -29,7 +26,7 @@ services:
     #image: php:fpm
     #links:
     #  - db:db
-    #  - mq:mq
+    # - mq:mq
     #  - redis:redis
     volumes:
       - "../src/basic/:/data/web/"
@@ -37,32 +34,27 @@ services:
       - "./php_log/:/usr/local/var/log/"
       - "./php_conf/:/usr/local/etc/"
       - "/etc/localtime:/etc/localtime"
-      #- "sock_php:/var/run"  
     networks:
       - backend_php
-    #network_mode:
-      #"host"
-    depends_on:
-      - db
-      - redis
   #mq:
   #  container_name: rabbitmq
   #  image: rabbitmq
   
-  db:
-    container_name: mysql
-    image: mysql
-    environment:
-        MYSQL_DATABASE: db_wxprogram
-        MYSQL_ROOT_PASSWORD: 1234rewq
-    ports:
-      - "33060:3306"
-    volumes:
-      - "./mysql_file/:/var/lib/mysql"
-      - "./mysql_conf/:/etc/mysql/"
-      - "/etc/localtime:/etc/localtime"
-        #networks:
-        #- backend_php
+  #db:
+  #  container_name: mysql
+  #  image: mysql
+  #  environment:
+  #      MYSQL_DATABASE: db_findata
+  #      MYSQL_ROOT_PASSWORD: 1234rewq
+  #  ports:
+  #    - "33060:3306"
+  #  volumes:
+  #    - "./mysql_file/:/var/lib/mysql"
+  #    - "./mysql_conf/mysql.conf.d/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf"
+      #- "./mysql_conf/:/etc/mysql/"
+      #    - "/etc/localtime:/etc/localtime"
+      #  networks:
+      #- backend_php
 
   redis:
     container_name: redis
@@ -71,11 +63,9 @@ services:
       - "6499:6379"
     volumes:
       - "/etc/localtime:/etc/localtime"
-        #networks:
-        #- backend_php
+    networks:
+      - backend_php
         
 networks:
     backend_php:
         driver: bridge
-#volumes:
-#    sock_php:
